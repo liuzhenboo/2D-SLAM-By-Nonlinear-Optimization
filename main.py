@@ -9,18 +9,16 @@ from draw import Draw
 from landmark import Landmark
 from measure import Measure
 from solver import Solver
+from frame import Frame
+from mappoint import Mappoint
+from slidewindow_graph import Slidewindow_graph
 
-# 运动模型类
 init_pose = np.array([[12.0], [3.0], [0.0]])
 move_model = MoveModel(init_pose)
-# 路标点类
 landmarks = Landmark()
-# 绘图类
 draw = Draw()
-# 测量类
-measure = Measure(move_model)
-# 优化类
 solver = Solver()
+slidewindow_graph =Slidewindow_graph()
 
 # 循环计数
 n = 0
@@ -30,12 +28,13 @@ sum = 1000
 r = 3.0
 
 while n != sum:
+    measure = Measure(move_model)
     measure.GetMeasure(landmarks._landmarks, r)
-
     if n == 0:
-        solver.Init()
+        slidewindow_graph.Init_slidewindow_graph(measure._data, measure._pose_id, init_pose)
     else:
-        solver.Update_slidewindow_graph()
+        slidewindow_graph.Update_slidewindow_graph(measure._data, measure._pose_id)
+
     draw.Show_Result(move_model._currentpose, r, landmarks._landmarks)
     move_model.updatepose()
     n = n + 1

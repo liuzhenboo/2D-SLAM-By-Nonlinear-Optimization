@@ -1,6 +1,6 @@
 import numpy as np
 
-
+from measure import Measure
 #b[0,0] = [1,1]
 #print(b)
 # b = np.zeros((2, 3))
@@ -11,5 +11,11 @@ import numpy as np
 #     n = n + 1
     
 # print(b)
-a = [[8], [8.8]]
+
+a = {}
+a[2] = [2]
+a[3] = 3
+a[100] = 9
+if 10 in a:
+    print('s')
 print(a)
