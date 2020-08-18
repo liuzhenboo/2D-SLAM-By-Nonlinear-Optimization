@@ -1,4 +1,5 @@
 # coding:utf-8
+# create by liuzhenbo 2020/8/16 in nwpu
 
 import numpy as np
 from math import sin, cos
@@ -14,7 +15,7 @@ class Slidewindow_graph:
         self._max_window = 8
         # 滑动窗口中的frame集合
         self._frames = []
-        # 滑动窗口中mappoint集合，里面元素为字典(描述子：Mappoints类)
+        # 滑动窗口中mappoint集合，里面元素为字典(描述子->Mappoints类)
         self._mappoints = {}
         self._esti_pose = [[],[]]
         self._f2ftrack = []
@@ -41,8 +42,11 @@ class Slidewindow_graph:
         self._lastframe = newFrame
 
     def Tracking(self, measure):
+        # （1）更新新的观测
         self._measure = measure
+        # （2）通过F2F跟踪五个点，初始估计新的状态；并将新的状态加入图
         self.Fivepoint_f2f_track()
+        # （3）利用滑窗内所有信息优化图
         self.Optimize_graph()
 
     def Fivepoint_f2f_track(self):
@@ -66,6 +70,7 @@ class Slidewindow_graph:
             i = i + 1
 
         init_gs = np.array([[self._lastframe._pose[0][0]], [self._lastframe._pose[1][0]], [cos(self._lastframe._pose[2][0])], [sin(self._lastframe._pose[2][0])]])
+        # 高斯牛顿法求解
         GNsolve = Gauss_newton(self._coefficient, init_gs)
         x = GNsolve.Solve()
         self._esti_pose[0].append(x[0][0])

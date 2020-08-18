@@ -1,4 +1,6 @@
 # -*-coding: UTF-8 -*-
+# create by liuzhenbo 2020/8/16 in nwpu
+
 import numpy as np
 import math
 class Gauss_newton:

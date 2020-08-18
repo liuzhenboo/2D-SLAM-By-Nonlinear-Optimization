@@ -1,4 +1,5 @@
 # coding:utf-8
+# create by liuzhenbo 2020/8/16 in nwpu
 import numpy as np
 from numpy import linspace
 import matplotlib.pyplot as plt
@@ -36,6 +37,7 @@ while n != sum:
     measure.GetMeasure()
 
     if n == 0:
+        # 整个框架就是为了维护这个slidewindow_graph结构
         slidewindow_graph.Init_slidewindow_graph(estimate_init_pose, measure)
     else:
         slidewindow_graph.Tracking(measure) 
