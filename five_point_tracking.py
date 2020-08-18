@@ -3,7 +3,7 @@ import numpy as np
 import math
 class Gauss_newton:
     def __init__(self, paramter, init_vale):
-        self._allow_error = 0.001
+        self._allow_error = 0.1
         self._best_state = np.array([[0.0], [0.0], [0.0], [0.0]])
         self._best_state = init_vale
         self._want_state = np.array([[0.0],[0.0],[0.0]])
@@ -60,7 +60,7 @@ class Gauss_newton:
 
     def Solve(self):
         sum = 0
-        while self.Error() > self._allow_error and sum < 1000:
+        while self.Error() > self._allow_error and sum < 50:
             sum = sum + 1
             #print(np.dot(self.Jacobi().T, self.Jacobi()))
             delta = np.linalg.solve(np.dot(self.Jacobi().T, self.Jacobi()) + 0.0 * np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]), -np.dot(self.Jacobi().T, self._error_state))

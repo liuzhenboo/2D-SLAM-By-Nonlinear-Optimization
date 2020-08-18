@@ -19,7 +19,5 @@ class Frame:
         self._seeMappints.add(point)
         self._seeDescriptor.add(point._descriptor)
 
-    def set_pose_matrix(self, pose):
-        self
-
+    
 
