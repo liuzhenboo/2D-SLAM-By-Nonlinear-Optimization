@@ -16,7 +16,7 @@ class MoveModel:
         self._currentpose[0, 0] = delta_xy[0, 0] + self._currentpose[0, 0]
         self._currentpose[1, 0] = delta_xy[1, 0] + self._currentpose[1, 0]
         self._currentpose[2, 0] = self._delta_jiaodu + self._currentpose[2, 0]
-
+    
         # update others
         (self._tb)[0, 0] = (self._currentpose)[0, 0]
         (self._tb)[1, 0] = (self._currentpose)[1, 0]

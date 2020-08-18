@@ -1,6 +1,5 @@
 import numpy as np
-
-from measure import Measure
+import math
 #b[0,0] = [1,1]
 #print(b)
 # b = np.zeros((2, 3))
@@ -12,10 +11,35 @@ from measure import Measure
     
 # print(b)
 
-a = {}
-a[2] = [2]
-a[3] = 3
-a[100] = 9
-if 10 in a:
-    print('s')
+# a = {}
+# a[2] = [2]
+# a[3] = 3
+# a[100] = 9
+# if 10 in a:
+#     print('s')
+# print(a)
+# A = np.array([[1, 2, 3], [2, -1, 1], [3, 0, -1],[1,2,4]])
+# b = np.array([9, 8, 3,10])
+# x = np.linalg.solve(A, b)
+# print(x)
+# from math import sin, cos 
+# from scipy import optimize
+# def f(x): 
+#     x0, xl, x2 = x.tolist() 
+#     return [
+#             5*xl+3,
+#             4*x0*x0 - 2*sin(xl*x2), 
+#             xl*x2 - 1.5,
+#             1
+#             ]
+# result = optimize.fsolve(f, [1,1,1])
+# print (result)
+# print (f(result))
+# while True:
+#     noise = np.random.normal(0.0, 0.1)
+#     print(noise)
+# A = np.array([[1], [2]])
+# a = np.dot(A.T, A)
+# print(a[0][0])
+a = math.asin(-1.0)
 print(a)

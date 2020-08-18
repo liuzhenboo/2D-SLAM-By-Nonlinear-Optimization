@@ -25,7 +25,7 @@ class Draw:
 
 
     # 画出当前时刻路标点位置, 真实运动点,估计运动点,扫描半径
-    def Show_Result(self, currentpose, r, landmarks):
+    def Show_Result(self, currentpose, r, landmarks, temp, temp1):
         # 真实位置(x,y)
         self._x = [currentpose[0,0]]
         self._y = [currentpose[1, 0]]
@@ -44,6 +44,8 @@ class Draw:
         plt.axis([-1, 21, -1, 21])
         ax = plt.gca()
         ax.set_aspect(1)
+        plt.scatter(temp[0], temp[1], color='b')
+        plt.plot(temp1[0], temp1[1], color= 'b')
         plt.plot(self._circlex,self._circley, color='b')
         plt.plot(self._x, self._y, color='b', marker='+')
         plt.scatter(landmarks[0], landmarks[1], color='r', marker='*')
