@@ -17,13 +17,19 @@ class Slidewindow_graph:
         self._frames = []
         # 滑动窗口中mappoint集合，里面元素为字典(描述子->Mappoints类)
         self._mappoints = {}
+        self._state = np.array([])
+        self._descriptor2state = {}
+        self._jacobi = np.array([])
+
+
         self._esti_pose = [[],[]]
         self._f2ftrack = []
         self._lastframe = Frame(0)
         self._coefficient = [[], []]
+        self._measure_count = 0
 
         self._measure = Measure()
-    def Init_slidewindow_graph(self, init_pose, measure):
+    def Initialize(self, init_pose, measure):
         self._measure = measure
         newFrame = Frame(self._measure._pose_id)
 
@@ -31,22 +37,25 @@ class Slidewindow_graph:
 
         for i in range(0, len(self._measure._data[0])):
             mp = np.array([[self._measure._data[0][i]], [self._measure._data[1][i]]])
-            mp = np.dot(np.linalg.inv(newFrame._Rbm), mp) + newFrame._tb  
+            pose = np.dot(np.linalg.inv(newFrame._Rbm), mp) + newFrame._tb  
             newmappoint = Mappoint()
             newmappoint.set_descriptor(self._measure._data[2][i])
-            newmappoint.set_pose(mp)
+            newmappoint.set_pose(pose)
             newFrame.add_mappoint(newmappoint)
+            newFrame.add_measure(mp)
             newmappoint.add_frame(newFrame)
             self._mappoints[newmappoint._descriptor] = newmappoint
         self._frames.append(newFrame)
         self._lastframe = newFrame
+        self._measure_count = len(self._measure._data[0]) + self._measure_count
 
-    def Tracking(self, measure):
+    def Update(self, measure):
         # （1）更新新的观测
         self._measure = measure
-        # （2）通过F2F跟踪五个点，初始估计新的状态；并将新的状态加入图
+        self._measure_count = len(self._measure._data[0]) + self._measure_count
+        # （2）前端跟踪：通过F2F跟踪五个点，初始估计新的状态；并将新的状态加入图
         self.Fivepoint_f2f_track()
-        # （3）利用滑窗内所有信息优化图
+        # （3）后端优化：利用滑窗内所有信息优化图
         self.Optimize_graph()
 
     def Fivepoint_f2f_track(self):
@@ -73,28 +82,63 @@ class Slidewindow_graph:
         # 高斯牛顿法求解
         GNsolve = Gauss_newton(self._coefficient, init_gs)
         x = GNsolve.Solve()
-        self._esti_pose[0].append(x[0][0])
-        self._esti_pose[1].append(x[1][0])
+        # self._esti_pose[0].append(x[0][0])
+        # self._esti_pose[1].append(x[1][0])
         newFrame.set_pose(x)
         # 根据当前帧的位置，来估计新增加mappoint的初始位置；老的mappoints位置不变
         for i in range(0, len(self._measure._data[0])):
+            mp = np.array([[self._measure._data[0][i]], [self._measure._data[1][i]]])
             if self._measure._data[2][i] in self._mappoints:
                 newFrame.add_mappoint(self._mappoints[self._measure._data[2][i]])
+                newFrame.add_measure(mp)
                 self._mappoints[self._measure._data[2][i]].add_frame(newFrame)
                 continue
             else:
-                mp = np.array([[self._measure._data[0][i]], [self._measure._data[1][i]]])
-                #print(newFrame._Rbm)
-                mp = np.dot(np.linalg.inv(newFrame._Rbm), mp) + newFrame._tb  
+                pose = np.dot(np.linalg.inv(newFrame._Rbm), mp) + newFrame._tb  
                 newmappoint = Mappoint()
                 newmappoint.set_descriptor(self._measure._data[2][i])
-                newmappoint.set_pose(mp)
+                newmappoint.set_pose(pose)
                 newFrame.add_mappoint(newmappoint)
+                newFrame.add_measure(mp)
                 newmappoint.add_frame(newFrame)
                 self._mappoints[newmappoint._descriptor] = newmappoint
         #print(len(newFrame._seeDescriptor))
         self._frames.append(newFrame)
         self._lastframe = newFrame
 
-    def Optimize_graph(self):
+    def Assemble_state(self):
+        self._state = np.array([])
+        self._jacobi = np.array([])
+        self._descriptor2state = {}
+        
+        dim = 3*len(self._frames) + 2*len(self._mappoints)
+        self._state.resize(dim, 1)
+        self._jacobi.resize(2 * self._measure_count, dim)
+        index = 0 
+        for i in range(0, len(self._frames)):
+            # 装配位姿向量(3*1)
+            self._state[index:(index + 3), 0] = self._frames[i]._pose[0:3, 0]
+            index = index + 3
+            # 装配地图点向量(2*1)
+            for j in range(0, len(self._frames[i]._seeMappints)):
+                if not self._frames[i]._seeMappints[j]._descriptor in self._descriptor2state:
+                    self._state[index:(index + 2), 0] = self._frames[i]._seeMappints[j]._pose[0:2, 0]
+                    self._descriptor2state[self._frames[i]._seeMappints[j]._descriptor] = index
+                    index = index + 2
+
+    def Linearization(self):
+        self.Assemble_state()
+
+        
+    
+    def Iterative_optimize(self):
         pass
+
+
+    def Optimize_graph(self):
+        self.Linearization()
+        self.Iterative_optimize()
+        self.Get_currentpose()
+    def Get_currentpose(self):
+        self._esti_pose[0].append(0)
+        self._esti_pose[1].append(0)

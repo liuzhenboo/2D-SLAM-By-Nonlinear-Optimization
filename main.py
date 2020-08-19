@@ -38,9 +38,9 @@ while n != sum:
 
     if n == 0:
         # 整个框架就是为了维护这个slidewindow_graph结构
-        slidewindow_graph.Init_slidewindow_graph(estimate_init_pose, measure)
+        slidewindow_graph.Initialize(estimate_init_pose, measure)
     else:
-        slidewindow_graph.Tracking(measure) 
+        slidewindow_graph.Update(measure) 
     
     draw.Show_result(r)
     
