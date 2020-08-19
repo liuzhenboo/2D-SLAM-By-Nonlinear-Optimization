@@ -31,10 +31,9 @@ sum = 500
 # 主逻辑
 #####################################################################################
 
-while n != sum:
-
+while n != 300:
     measure = Measure(move_model, landmarks, r)
-    measure.GetMeasure()
+    measure.GetMeasure(n)
 
     if n == 0:
         # 整个框架就是为了维护这个slidewindow_graph结构

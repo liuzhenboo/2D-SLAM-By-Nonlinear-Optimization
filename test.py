@@ -41,10 +41,13 @@ import math
 # A = np.array([[1], [2]])
 # a = np.dot(A.T, A)
 # print(a[0][0])
-a = np.array([[3], [1], [9]])
-b = np.array([[0], [0]])
+# a = np.array([[3], [1], [9]])
+# b = np.array([[0], [0]])
 
-a[0:2,0] = b[0:2,0]
-b[0][0] = 100
-if not False:
-    print(a)
+# a[0:2,0] = b[0:2,0]
+# b[0][0] = 100
+# if not False:
+#     print(a)
+
+a = np.array([[1, 0], [0, 1]])
+print(a[0:2,1])

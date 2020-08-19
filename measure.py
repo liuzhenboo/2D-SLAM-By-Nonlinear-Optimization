@@ -13,9 +13,9 @@ class Measure:
         self._landmarks = landmarks
 
 
-    def GetMeasure(self):
+    def GetMeasure(self, n):
         # 更新pose id
-        self._pose_id = self._pose_id + 1
+        self._pose_id = n
 
         # 更新观测关系
         for i in range(0,np.size(self._landmarks._landmarks,1)):
