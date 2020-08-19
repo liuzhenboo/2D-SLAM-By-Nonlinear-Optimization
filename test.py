@@ -1,5 +1,6 @@
 import numpy as np
 import math
+from frame import Frame 
 #b[0,0] = [1,1]
 #print(b)
 # b = np.zeros((2, 3))
@@ -48,6 +49,21 @@ import math
 # b[0][0] = 100
 # if not False:
 #     print(a)
-
-a = np.array([[1, 0], [0, 1]])
-print(a[0:2,1])
+# a = Frame(0)
+# b = Frame(2)
+# c = Frame(3)
+# d = [a, b, c]
+# print(d)
+# d.remove(b)
+# print(d)
+# print(b)
+# f = set()
+# f.add(a)
+# f.add(b)
+# f.add(c)
+# print(f)
+# f.remove(b)
+# print(f)
+# print(b)
+c = np.array([[1],[2]])
+print(len(c))

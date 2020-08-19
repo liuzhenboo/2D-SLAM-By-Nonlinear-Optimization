@@ -66,6 +66,7 @@ class Slidewindow_graph:
         self.Fivepoint_f2f_track()
         # （3）后端优化：利用滑窗内所有信息优化图
         self.Optimize_graph()
+        #self.Get_currentpose()
 
     def Fivepoint_f2f_track(self):
         self._f2ftrack = [[],[]]
@@ -189,8 +190,8 @@ class Slidewindow_graph:
         sum = 0
         #print(np.dot(self._error.T, self._error)[0][0])
         while np.dot(self._error.T, self._error)[0][0] > 0.1 and sum < 20:
-            #print(len(self._error))
-            delta = np.linalg.solve(np.dot(self._jacobi.T, self._jacobi), -np.dot(self._jacobi.T, self._error))
+            #print(self._jacobi)
+            delta = np.linalg.solve(np.dot(self._jacobi.T, self._jacobi)+0.01*np.identity(len(self._state)), -np.dot(self._jacobi.T, self._error))
             #print(delta)
             #exit()
             # 更新线性化点
@@ -199,9 +200,30 @@ class Slidewindow_graph:
             self.Assemble_jacobi()
             # 更新残差向量
             sum = sum + 1
-        #print(self._state)
+        print(len(self._state))
         #exit()
 
+    def Cut_window(self):
+        #print('pkpppppppppp')
+
+        for i in range(0, len(self._frames[0]._seeMappints)):
+            mappoint0 = self._frames[0]._seeMappints[0]
+            del self._mappoints[mappoint0._descriptor]
+            self._measure_count = self._measure_count - len(mappoint0._seeFrames)
+            for j in range(0, len(mappoint0._seeFrames)):
+                # print(len(mappoint0._seeFrames))
+                # print(self._measure_count - len(mappoint0._seeFrames))
+                # # print(len(mappoint0._seeFrames))
+                # print(mappoint0._seeFrames[0])
+                # print(j)
+                frame0 = mappoint0._seeFrames[j]
+                (frame0._seeMappints).remove(mappoint0)
+                (frame0._seeDescriptor).remove(mappoint0._descriptor)
+                del (frame0._measure)[mappoint0._descriptor]
+                #del mappoint0
+        self._frames.remove(self._frames[0])
+            
+             
     def Optimize_graph(self):
         #t1 = time.clock()
         self.Linearization()
@@ -212,8 +234,11 @@ class Slidewindow_graph:
         #t2 = time.clock()
         #print(t2-t1)
 
-        #self.Flush_graph()
+        self.Flush_graph()
         self.Get_currentpose()
+        if len(self._frames) > 30:
+            self.Cut_window()
+
     def Get_currentpose(self):
         self._esti_pose[0].append(self._lastframe._pose[0][0])
         self._esti_pose[1].append(self._lastframe._pose[1][0])
