@@ -1,8 +1,13 @@
-模拟手持相机过程
+# 2D-SLAM-By-Nonlinear-Optimization
 
-实现滑动窗口的BA，并且边缘化，自己写高斯牛顿优化器
+## Features
 
-对象化编程
+非线性优化，LM迭代优化，滑动窗口，边缘化，FEJ
 
-定位相机位置
+## Report
 
+[Reports](./report)
+
+## Reasults
+
+[picture](./1.png)
