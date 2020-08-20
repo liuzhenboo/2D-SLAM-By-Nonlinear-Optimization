@@ -1,5 +1,14 @@
 # coding:utf-8
 # create by liuzhenbo 2020/8/16 in nwpu
+##-------------------------------------------------------------
+######   #              #              #           #
+#        #             # #            # #         # #
+#        #            #   #          #   #       #   #
+######   #           # # # #        #     #     #     #
+     #   #          #       #      #       #   #       #
+     #   #         #         #    #         # #         #
+######   #######  #           #  #           #           #
+##---------------------------------------------------------------
 import numpy as np
 from numpy import linspace
 import matplotlib.pyplot as plt
@@ -7,7 +16,7 @@ import time
 import sys
 import os
 
-# 自己的类
+# 我的类
 from movemodel import MoveModel
 from draw import Draw
 from landmark import Landmark
@@ -24,16 +33,14 @@ landmarks = Landmark()
 slidewindow_graph = Slidewindow_graph()
 draw = Draw(landmarks, slidewindow_graph, move_model)
 
-# 传感器参数
+# 传感器半径
 r = 4.0
 
 # 循环计数
 n = 0
 sum = 500
-
-# 主逻辑
-#####################################################################################
-
+# 主逻辑（*.*）     
+#########################################################
 while n != sum:
     measure = Measure(move_model, landmarks, r)
     measure.GetMeasure(n)
@@ -50,3 +57,4 @@ while n != sum:
     
     move_model.Updatepose()
     n = n + 1
+##############################################################

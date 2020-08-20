@@ -59,13 +59,3 @@ class Draw:
         plt.pause(0.01)
 
 
-# plt.axis('equal')
-# plt.set_xlim = (0, 10)
-# plt.set_ylim=(0,4)
-
-#clf() # 清图。
-#cla() # 清坐标轴。
-#close() # 关窗口
-#https://www.zhihu.com/question/51213258/answer/124713752
-#https://www.zhihu.com/question/353439108
-#https://zhuanlan.zhihu.com/p/37595853

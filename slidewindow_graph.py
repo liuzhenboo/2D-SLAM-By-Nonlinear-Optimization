@@ -294,7 +294,7 @@ class Slidewindow_graph:
         
         #t1 = time.clock()
         if len(self._frames_DB) > self._max_window:
-            #self.Get_prior()
+            self.Get_prior()
             self.Cut_window()
         #t2 = time.clock()
         #print(t2-t1)
