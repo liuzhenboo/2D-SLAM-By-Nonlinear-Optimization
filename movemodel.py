@@ -9,8 +9,8 @@ class MoveModel:
         self._Rbm = np.array([[np.cos(init_pose[2,0]), np.sin(init_pose[2,0])],
                              [-np.sin(init_pose[2,0]), np.cos(init_pose[2,0])]])  # 2*2
         self._tb = np.array([[init_pose[0, 0]], [init_pose[1, 0]]])  # 2*1
-        self._delta_xy = np.array([[0.2],[0.1]])
-        self._delta_jiaodu = 0.03
+        self._delta_xy = np.array([[0.6],[0.1]])
+        self._delta_jiaodu = 0.1
     def Updatepose(self):
         # update _currentpose
         delta_xy = np.dot(np.linalg.inv(self._Rbm) , (self._delta_xy))

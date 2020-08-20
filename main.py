@@ -3,6 +3,9 @@
 import numpy as np
 from numpy import linspace
 import matplotlib.pyplot as plt
+import time
+import sys
+import os
 
 # 自己的类
 from movemodel import MoveModel
@@ -22,7 +25,7 @@ slidewindow_graph = Slidewindow_graph()
 draw = Draw(landmarks, slidewindow_graph, move_model)
 
 # 传感器参数
-r = 3.0
+r = 4.0
 
 # 循环计数
 n = 0
@@ -39,8 +42,10 @@ while n != sum:
         # 整个框架就是为了维护这个slidewindow_graph结构
         slidewindow_graph.Initialize(estimate_init_pose, measure)
     else:
+        t1 = time.clock()
         slidewindow_graph.Update(measure) 
-    
+        t2 = time.clock()
+        #print(t2-t1)
     draw.Show_result(r)
     
     move_model.Updatepose()
