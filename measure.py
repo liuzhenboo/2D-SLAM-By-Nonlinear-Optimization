@@ -19,10 +19,10 @@ class Measure:
 
         # 更新观测关系
         for i in range(0,np.size(self._landmarks._landmarks,1)):
-            if (pow((self._movemodel_class._tb[0][0] - 1.0 * self._landmarks._landmarks[0][i]), 2.0) + pow((self._movemodel_class._tb[1][0] - 1.0 * self._landmarks._landmarks[1][i]), 2.0)) <= self._r * self._r:
+            if (pow((self._movemodel_class._tb[0][0] - 1.0 * self._landmarks._landmarks[0][i]), 2.0) + pow((self._movemodel_class._tb[1][0] - 1.0 * self._landmarks._landmarks[1][i]), 2.0)) <= self._r * self._r :
                 temp = np.array([[self._landmarks._landmarks[0][i]],[self._landmarks._landmarks[1][i]]])
                 one_data = np.dot(self._movemodel_class._Rbm, (temp - self._movemodel_class._tb))
                 del temp
-                self._data[0].append(one_data[0, 0]+ np.random.normal(0,0.01))
-                self._data[1].append(one_data[1, 0]+ np.random.normal(0,0.01))
+                self._data[0].append(one_data[0, 0]+ np.random.normal(0,0.1))
+                self._data[1].append(one_data[1, 0]+ np.random.normal(0,0.1))
                 self._data[2].append(self._landmarks._landmarks[2][i])  

@@ -65,5 +65,10 @@ from frame import Frame
 # f.remove(b)
 # print(f)
 # print(b)
-c = np.array([[1],[2]])
-print(len(c))
+# while True:
+#     print(np.random.normal(0,0.1))
+s = np.array([[1, 1], [2, 1]])
+d0 = np.zeros((3, 3))
+d0[0:2, 0:2] = s
+s = d0
+print(s)

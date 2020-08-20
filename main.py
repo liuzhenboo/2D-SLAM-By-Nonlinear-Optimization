@@ -31,7 +31,7 @@ sum = 500
 # 主逻辑
 #####################################################################################
 
-while n != 300:
+while n != sum:
     measure = Measure(move_model, landmarks, r)
     measure.GetMeasure(n)
 

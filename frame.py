@@ -13,6 +13,7 @@ class Frame:
         self._seeMappints = []
         self._seeDescriptor = set()
         self._measure = {}
+        self._new_mappoint_state = []
     def set_pose(self, pose):
         self._pose = pose
         self._Rbm = np.array([[np.cos(pose[2,0]), np.sin(pose[2,0])],
@@ -24,5 +25,8 @@ class Frame:
         self._seeDescriptor.add(point._descriptor)
     def add_measure(self, measure, descriptor):
         self._measure[descriptor] = measure
+
+    def add_newmappoints(self, point):
+        self._new_mappoint_state.append(point)
 
 
