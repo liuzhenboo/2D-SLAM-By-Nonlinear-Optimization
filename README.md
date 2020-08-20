@@ -10,4 +10,4 @@
 
 ## Reasults
 
-[picture](./1.png)
+![picture](https://github.com/liuzhenboo/2D-SLAM-By-Nonlinear-Optimization/raw/master/pictures/1.png)
