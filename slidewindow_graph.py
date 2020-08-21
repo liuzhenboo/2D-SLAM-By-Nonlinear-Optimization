@@ -70,7 +70,7 @@ class Slidewindow_graph:
         # （2）前端跟踪：通过F2F跟踪五个点，初始估计新的状态；并将新的状态加入图
         self.Fivepoint_f2f_track()
         # （3）后端优化：利用滑窗内所有信息优化图
-        #self.Optimize_graph()
+        self.Optimize_graph()
         # （4）保存信息，用于做图
         self.For_draw()
 
