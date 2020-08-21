@@ -4,7 +4,7 @@ import time
 import sys
 import os
 import numpy as np
-#np.set_printoptions(threshold=np.inf)
+np.set_printoptions(threshold=np.inf)
 
 from math import sin, cos
 import math
@@ -70,7 +70,7 @@ class Slidewindow_graph:
         # （2）前端跟踪：通过F2F跟踪五个点，初始估计新的状态；并将新的状态加入图
         self.Fivepoint_f2f_track()
         # （3）后端优化：利用滑窗内所有信息优化图
-        self.Optimize_graph()
+        #self.Optimize_graph()
         # （4）保存信息，用于做图
         self.For_draw()
 
@@ -190,24 +190,31 @@ class Slidewindow_graph:
         #print >> f, self._jacobi
 
     def Get_prior(self):
-        H = np.dot(self._jacobi.T, self._jacobi)
-        b = -np.dot(self._jacobi.T, self._error)
         dim = len(self._state)
-        dim1 = 2*len(self._frames_DB[0]._new_mappoint_state) + 3
+        dim1 = 2 * len(self._frames_DB[0]._new_mappoint_state) + 3
+        # debug
+        # if len(self._frames_DB[0]._new_mappoint_state) == len(self._frames_DB[0]._seeDescriptor):
+        #     print('ok')
         dim2 = dim - dim1
-        H = H + 0.01*np.identity(dim)
-        if len(self._prior_matrix) != 0:
-            H = H - self._prior_matrix
-            b = b - self._prior_matrixb
-            
+        measure_dim = 2 * len(self._frames_DB[0]._new_mappoint_state)
+
+        J_old = self._jacobi[0:measure_dim, 0:dim]
+        error_old = self._error[0:measure_dim, 0:1]
+        H = np.dot(J_old.T, J_old) + 0.01 * np.identity(dim)
+        b = -np.dot(J_old.T, error_old)
+        # f = open("./a.txt", 'w+')
         H21 = H[dim1:dim, 0:dim1]
+        # print(H21)
+        # print >> f, H21
+
         H11 = H[0:dim1, 0:dim1]
         H12 = H[0:dim1, dim1:dim]
-        self._prior_matrix.resize(dim2,dim2)
+        self._prior_matrix.resize(dim2, dim2)
         self._prior_matrix = np.dot(np.dot(H21, np.linalg.inv(H11)), H12)
+        #print(self._prior_matrix)
+
         self._prior_matrixb.resize(dim2, 1)
-        e = -np.dot(self._jacobi.T, self._error)
-        b_old = e[0:dim1, 0]
+        b_old = b[0:dim1, 0]
         self._prior_matrixb = np.dot(np.dot(H21, np.linalg.inv(H11)),b_old)
         #print("维度一致")    
 
@@ -224,6 +231,11 @@ class Slidewindow_graph:
             temp1 = np.zeros((len(self._state), 1))
             dim = len(self._state) - 2*len(self._lastframe._new_mappoint_state) - 3
             temp0[0:dim, 0:dim] = self._prior_matrix
+            # debug
+            # if len(self._prior_matrix) + 2 * len(self._lastframe._new_mappoint_state) + 3 == len(self._state):
+            #     print('ok')
+            # else:
+            #     print('wrong')
             # if dim == len(self._prior_matrix):
             #     print("ok!")
             # else:
@@ -231,17 +243,20 @@ class Slidewindow_graph:
             temp1[0:dim, 0] = self._prior_matrixb
             self._prior_matrix = temp0
             self._prior_matrixb = temp1
-
+            #print(self._prior_matrix)
             #print("维度对着呢")
-        while np.dot(self._error.T, self._error)[0][0] > 0.001 and sum < 10:
+        while np.dot(self._error.T, self._error)[0][0] > -0.001 and sum < 10:
             #print(self._jacobi)
-            if len(self._prior_matrix) ==0:
+            if len(self._prior_matrix) == 0:
+                print("未使用先验！")
+
                 H = np.dot(self._jacobi.T, self._jacobi) + 0.01 * np.identity(len(self._state))
                 b = -np.dot(self._jacobi.T, self._error)
             else:
                 H = np.dot(self._jacobi.T, self._jacobi) + 0.01 * np.identity(len(self._state)) - self._prior_matrix
+                
                 b = -np.dot(self._jacobi.T, self._error) - self._prior_matrixb
-                #print("使用先验！")
+                print("使用先验！")
          
             delta = np.linalg.solve(H, b)
             #print(delta)

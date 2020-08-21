@@ -72,6 +72,10 @@ from frame import Frame
 # s[0:2,0:2] = d 
 # print(s)
 # print(len(np.array([])))
-from measure import Measure
-m = Measure()
-print(math.acos(1.0 / 2.0))
+# from measure import Measure
+# m = Measure()
+# print(math.acos(1.0 / 2.0))
+
+a = np.array([[1, 2], [3, 4]])
+b = np.array([[1],[1]])
+print(np.dot(a,b))

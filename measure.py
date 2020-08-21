@@ -19,13 +19,13 @@ class Measure:
 
         # 更新观测关系
         for i in range(0,np.size(self._landmarks._landmarks,1)):
-            if (pow((self._movemodel_class._tb[0][0] - 1.0 * self._landmarks._landmarks[0][i]), 2.0) + pow((self._movemodel_class._tb[1][0] - 1.0 * self._landmarks._landmarks[1][i]), 2.0)) <= self._r * self._r and (pow((self._movemodel_class._tb[0][0] - 1.0 * self._landmarks._landmarks[0][i]), 2.0) + pow((self._movemodel_class._tb[1][0] - 1.0 * self._landmarks._landmarks[1][i]), 2.0)) >=1.0 :
+            if (pow((self._movemodel_class._tb[0][0] - 1.0 * self._landmarks._landmarks[0][i]), 2.0) + pow((self._movemodel_class._tb[1][0] - 1.0 * self._landmarks._landmarks[1][i]), 2.0)) <= self._r * self._r and (pow((self._movemodel_class._tb[0][0] - 1.0 * self._landmarks._landmarks[0][i]), 2.0) + pow((self._movemodel_class._tb[1][0] - 1.0 * self._landmarks._landmarks[1][i]), 2.0)) >=0.01 :
                 temp = np.array([[self._landmarks._landmarks[0][i]],[self._landmarks._landmarks[1][i]]])
                 one_data = np.dot(self._movemodel_class._Rbm, (temp - self._movemodel_class._tb))
                 del temp
-                alpha = self.xy2angle(one_data[0][0], one_data[1][0]) + (math.pi/180.0)*np.random.normal(0,1)
+                alpha = self.xy2angle(one_data[0][0], one_data[1][0]) + (math.pi/90.0)*np.random.normal(0,1)
                 #print (alpha)
-                l = math.sqrt(one_data[0][0]*one_data[0][0] + one_data[1][0]*one_data[1][0]) + (0.05)*np.random.normal(0,1)
+                l = math.sqrt(one_data[0][0]*one_data[0][0] + one_data[1][0]*one_data[1][0]) + (0.1)*np.random.normal(0,1)
                 self._data[0].append(alpha)
                 self._data[1].append(l)
                 self._data[2].append(self._landmarks._landmarks[2][i])

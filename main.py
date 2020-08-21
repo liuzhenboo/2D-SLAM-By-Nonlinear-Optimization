@@ -34,11 +34,11 @@ slidewindow_graph = Slidewindow_graph()
 draw = Draw(landmarks, slidewindow_graph, move_model)
 
 # 传感器半径
-r = 4.0
+r = 3.0
 
 # 循环计数
 n = 0
-sum = 500
+sum = 100
 # 主逻辑（*.*）     
 #########################################################
 while n != sum:
