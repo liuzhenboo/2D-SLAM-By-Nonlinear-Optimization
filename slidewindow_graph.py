@@ -197,27 +197,24 @@ class Slidewindow_graph:
         #     print('ok')
         dim2 = dim - dim1
         measure_dim = 2 * len(self._frames_DB[0]._new_mappoint_state)
-
         J_old = self._jacobi[0:measure_dim, 0:dim]
         error_old = self._error[0:measure_dim, 0:1]
-        H = np.dot(J_old.T, J_old) + 0.01 * np.identity(dim)
-        b = -np.dot(J_old.T, error_old)
-        # f = open("./a.txt", 'w+')
+        if len(self._prior_matrix) > 0:
+            H = np.dot(J_old.T, J_old) + 0.01 * np.identity(dim) + self._prior_matrix
+            b = -np.dot(J_old.T, error_old) + self._prior_matrixb
+        else:
+            H = np.dot(J_old.T, J_old) + 0.01 * np.identity(dim) 
+            b = -np.dot(J_old.T, error_old)           
         H21 = H[dim1:dim, 0:dim1]
-        # print(H21)
+        # f = open("./a.txt", 'w+')
         # print >> f, H21
-
-        H11 = H[0:dim1, 0:dim1]
+        H11 = H[0:dim1, 0:dim1] 
         H12 = H[0:dim1, dim1:dim]
-        self._prior_matrix.resize(dim2, dim2)
-        self._prior_matrix = np.dot(np.dot(H21, np.linalg.inv(H11)), H12)
-        #print(self._prior_matrix)
-
-        self._prior_matrixb.resize(dim2, 1)
+        H22 = H[dim1:dim, dim1:dim]
         b_old = b[0:dim1, 0]
-        self._prior_matrixb = np.dot(np.dot(H21, np.linalg.inv(H11)),b_old)
-        #print("维度一致")    
-
+        self._prior_matrix = H22 - np.dot(np.dot(H21, np.linalg.inv(H11)), H12)
+        self._prior_matrixb = b[dim1:dim, 0] - np.dot(np.dot(H21, np.linalg.inv(H11)), b_old)
+            
     def Linearization(self):
         self.Assemble_state()
         self.Assemble_jacobi()
@@ -245,7 +242,7 @@ class Slidewindow_graph:
             self._prior_matrixb = temp1
             #print(self._prior_matrix)
             #print("维度对着呢")
-        while np.dot(self._error.T, self._error)[0][0] > -0.001 and sum < 10:
+        while np.dot(self._error.T, self._error)[0][0] > 0.01 and sum < 10:
             #print(self._jacobi)
             if len(self._prior_matrix) == 0:
                 print("未使用先验！")
@@ -253,9 +250,9 @@ class Slidewindow_graph:
                 H = np.dot(self._jacobi.T, self._jacobi) + 0.01 * np.identity(len(self._state))
                 b = -np.dot(self._jacobi.T, self._error)
             else:
-                H = np.dot(self._jacobi.T, self._jacobi) + 0.01 * np.identity(len(self._state)) - self._prior_matrix
+                H = np.dot(self._jacobi.T, self._jacobi) + 0.01 * np.identity(len(self._state)) + self._prior_matrix
                 
-                b = -np.dot(self._jacobi.T, self._error) - self._prior_matrixb
+                b = -np.dot(self._jacobi.T, self._error) + self._prior_matrixb
                 print("使用先验！")
          
             delta = np.linalg.solve(H, b)
