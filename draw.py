@@ -55,7 +55,8 @@ class Draw:
         plt.scatter(self._landmarks._landmarks[0], self._landmarks._landmarks[1], color='r', marker='*')
         plt.plot((self._traj)[0], (self._traj)[1], color='r')
         plt.scatter(self._graph._slideframes[0], self._graph._slideframes[1], color='r', marker='s')
-        plt.scatter(self._graph._slidepoints[0], self._graph._slidepoints[1], color = 'b',marker='*')
+        plt.scatter(self._graph._slidepoints[0], self._graph._slidepoints[1], color='b', marker='*')
+        plt.scatter(self._graph._f2ftrack_show[0], self._graph._f2ftrack_show[1],color='b',marker='s')
         plt.pause(0.01)
 
 

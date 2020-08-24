@@ -35,7 +35,8 @@ class Slidewindow_graph:
         self._measure_count = 0
         # draw
         self._esti_pose = [[],[]]
-        self._f2ftrack = [[],[]]
+        self._f2ftrack = []
+        self._f2ftrack_show = [[],[]]
         self._slideframes = [[], []]
         self._slidepoints = [[],[]]
     def Initialize(self, init_pose, measure):
@@ -46,10 +47,7 @@ class Slidewindow_graph:
         newFrame.set_pose(init_pose)
         # 初始化地图点位置
         for i in range(0, len(self._measure._data[0])):
-            x_local = self._measure._data[1][i] * math.cos(self._measure._data[0][i])
-            y_local = self._measure._data[1][i] * math.sin(self._measure._data[0][i])
-            raw_measure = np.array([[x_local], [y_local]])
-            raw_measure0 = np.array([[self._measure._data[0][i]],[self._measure._data[1][i]]])
+            raw_measure = np.array([[self._measure._data[0][i]],[self._measure._data[1][i]]])
 
             mp_pose = np.dot(np.linalg.inv(newFrame._Rbm), raw_measure) + newFrame._tb  
             newmappoint = Mappoint()
@@ -59,7 +57,7 @@ class Slidewindow_graph:
 
             newFrame.add_mappoint(newmappoint)
             newFrame.add_newmappoints(newmappoint)
-            newFrame.add_measure(raw_measure0, newmappoint._descriptor)
+            newFrame.add_measure(raw_measure, newmappoint._descriptor)
             self._mappoints_DB[newmappoint._descriptor] = newmappoint
         self._frames_DB.append(newFrame)
         self._lastframe = newFrame
@@ -75,7 +73,7 @@ class Slidewindow_graph:
         self.For_draw()
 
     def Fivepoint_f2f_track(self):
-        self._f2ftrack = [[],[]]
+        self._f2ftrack = []
         newFrame = Frame(self._measure._pose_id)
         # 根据前后帧数据关联，求出当前帧位姿的初始估计
         n = 0
@@ -86,8 +84,8 @@ class Slidewindow_graph:
             if self._measure._data[2][i] in self._lastframe._seeDescriptor:
                 self._coefficient[1].append((self._mappoints_DB[self._measure._data[2][i]])._pose[0][0])
                 self._coefficient[1].append((self._mappoints_DB[self._measure._data[2][i]])._pose[1][0])
-                self._coefficient[0].append(self._measure._data[1][i] * cos(self._measure._data[0][i]))
-                self._coefficient[0].append(self._measure._data[1][i] * sin(self._measure._data[0][i]))
+                self._coefficient[0].append(self._measure._data[0][i])
+                self._coefficient[0].append(self._measure._data[1][i])
                 n = n + 1
                 self._f2ftrack.append(self._measure._data[2][i])
             i = i + 1
@@ -99,13 +97,10 @@ class Slidewindow_graph:
         newFrame.set_pose(x)
         # 根据当前帧的位置，来估计新增加mappoint的初始位置；老的mappoints位置不变
         for i in range(0, len(self._measure._data[0])):
-            x_local = self._measure._data[1][i] * math.cos(self._measure._data[0][i])
-            y_local = self._measure._data[1][i] * math.sin(self._measure._data[0][i]) 
-            raw_measure = np.array([[x_local], [y_local]])
-            raw_measure0 = np.array([[self._measure._data[0][i]],[self._measure._data[1][i]]])
+            raw_measure = np.array([[self._measure._data[0][i]],[self._measure._data[1][i]]])
             if self._measure._data[2][i] in self._mappoints_DB:
                 newFrame.add_mappoint(self._mappoints_DB[self._measure._data[2][i]])
-                newFrame.add_measure(raw_measure0, self._measure._data[2][i])
+                newFrame.add_measure(raw_measure, self._measure._data[2][i])
                 self._mappoints_DB[self._measure._data[2][i]].add_frame(newFrame)
                 continue
             else:
@@ -117,7 +112,7 @@ class Slidewindow_graph:
 
                 newFrame.add_mappoint(newmappoint)
                 newFrame.add_newmappoints(newmappoint)
-                newFrame.add_measure(raw_measure0, newmappoint._descriptor)
+                newFrame.add_measure(raw_measure, newmappoint._descriptor)
                 self._mappoints_DB[newmappoint._descriptor] = newmappoint
         self._frames_DB.append(newFrame)
         self._lastframe = newFrame
@@ -181,8 +176,8 @@ class Slidewindow_graph:
                 self._jacobi[measure_index+1][point_index+1] = cos(theta)
 
                 # 残差向量
-                self._error[measure_index][0] = (x_p-x_f)*cos(theta)+(y_p-y_f)*sin(theta) - measure[1][0]*cos(measure[0][0])
-                self._error[measure_index+1][0] = (x_f-x_p)*sin(theta)+(y_p-y_f)*cos(theta) - measure[1][0] * sin(measure[0][0])
+                self._error[measure_index][0] = (x_p-x_f)*cos(theta)+(y_p-y_f)*sin(theta) - measure[0][0]
+                self._error[measure_index+1][0] = (x_f-x_p)*sin(theta)+(y_p-y_f)*cos(theta) - measure[1][0]
 
                 measure_index = measure_index + 2
         #f = open("./a.txt", 'w+')
@@ -245,7 +240,7 @@ class Slidewindow_graph:
         while np.dot(self._error.T, self._error)[0][0] > 0.01 and sum < 10:
             #print(self._jacobi)
             if len(self._prior_matrix) == 0:
-                print("未使用先验！")
+                #print("未使用先验！")
 
                 H = np.dot(self._jacobi.T, self._jacobi) + 0.01 * np.identity(len(self._state))
                 b = -np.dot(self._jacobi.T, self._error)
@@ -253,12 +248,12 @@ class Slidewindow_graph:
                 H = np.dot(self._jacobi.T, self._jacobi) + 0.01 * np.identity(len(self._state)) + self._prior_matrix
                 
                 b = -np.dot(self._jacobi.T, self._error) + self._prior_matrixb
-                print("使用先验！")
+                #print("使用先验！")
          
             delta = np.linalg.solve(H, b)
-            #print(delta)
-            #exit()
-            # 更新线性化点
+            # print(delta)
+            # exit()
+            # # 更新线性化点
             self._state = delta + self._state
             # 更新雅克比
             self.Assemble_jacobi()
@@ -342,4 +337,9 @@ class Slidewindow_graph:
             for j in range(0, len(self._frames_DB[i]._seeMappints)):
                 temp_index = self._descriptor2state[self._frames_DB[i]._seeMappints[j]._descriptor] 
                 self._frames_DB[i]._seeMappints[j]._pose[0:2, 0] = self._state[temp_index:(temp_index + 2), 0]
+            self._f2ftrack_show = [[],[]]
+            for k in range(0, len(self._f2ftrack)):
+                if self._f2ftrack[k] in self._mappoints_DB:
+                    self._f2ftrack_show[0].append(self._mappoints_DB[self._f2ftrack[k]]._pose[0][0])
+                    self._f2ftrack_show[1].append(self._mappoints_DB[self._f2ftrack[k]]._pose[1][0])
 

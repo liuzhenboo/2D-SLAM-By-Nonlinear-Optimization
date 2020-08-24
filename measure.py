@@ -23,11 +23,11 @@ class Measure:
                 temp = np.array([[self._landmarks._landmarks[0][i]],[self._landmarks._landmarks[1][i]]])
                 one_data = np.dot(self._movemodel_class._Rbm, (temp - self._movemodel_class._tb))
                 del temp
-                alpha = self.xy2angle(one_data[0][0], one_data[1][0]) + (math.pi/90.0)*np.random.normal(0,1)
+                x = one_data[0][0] + (0.1)*np.random.normal(0,1)
                 #print (alpha)
-                l = math.sqrt(one_data[0][0]*one_data[0][0] + one_data[1][0]*one_data[1][0]) + (0.1)*np.random.normal(0,1)
-                self._data[0].append(alpha)
-                self._data[1].append(l)
+                y = one_data[1][0] + (0.1)*np.random.normal(0,1)
+                self._data[0].append(x)
+                self._data[1].append(y)
                 self._data[2].append(self._landmarks._landmarks[2][i])
 #+ np.random.normal(0,0.05)
     def xy2angle(self, x, y):
