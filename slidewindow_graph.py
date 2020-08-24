@@ -317,6 +317,12 @@ class Slidewindow_graph:
             for j in range(0, len(self._frames_DB[i]._new_mappoint_state)):
                 self._slidepoints[0].append(self._frames_DB[i]._new_mappoint_state[j]._pose[0][0])
                 self._slidepoints[1].append(self._frames_DB[i]._new_mappoint_state[j]._pose[1][0])
+        self._f2ftrack_show = [[],[]]
+        for k in range(0, len(self._f2ftrack)):
+            if self._f2ftrack[k] in self._mappoints_DB:
+                self._f2ftrack_show[0].append(self._mappoints_DB[self._f2ftrack[k]]._pose[0][0])
+                self._f2ftrack_show[1].append(self._mappoints_DB[self._f2ftrack[k]]._pose[1][0])
+
 
     def Flush_graph(self):
 
@@ -337,9 +343,4 @@ class Slidewindow_graph:
             for j in range(0, len(self._frames_DB[i]._seeMappints)):
                 temp_index = self._descriptor2state[self._frames_DB[i]._seeMappints[j]._descriptor] 
                 self._frames_DB[i]._seeMappints[j]._pose[0:2, 0] = self._state[temp_index:(temp_index + 2), 0]
-            self._f2ftrack_show = [[],[]]
-            for k in range(0, len(self._f2ftrack)):
-                if self._f2ftrack[k] in self._mappoints_DB:
-                    self._f2ftrack_show[0].append(self._mappoints_DB[self._f2ftrack[k]]._pose[0][0])
-                    self._f2ftrack_show[1].append(self._mappoints_DB[self._f2ftrack[k]]._pose[1][0])
-
+            

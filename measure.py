@@ -23,9 +23,9 @@ class Measure:
                 temp = np.array([[self._landmarks._landmarks[0][i]],[self._landmarks._landmarks[1][i]]])
                 one_data = np.dot(self._movemodel_class._Rbm, (temp - self._movemodel_class._tb))
                 del temp
-                x = one_data[0][0] + (0.1)*np.random.normal(0,1)
+                x = one_data[0][0] + (0.05)*np.random.normal(0,1)
                 #print (alpha)
-                y = one_data[1][0] + (0.1)*np.random.normal(0,1)
+                y = one_data[1][0] + (0.05)*np.random.normal(0,1)
                 self._data[0].append(x)
                 self._data[1].append(y)
                 self._data[2].append(self._landmarks._landmarks[2][i])
