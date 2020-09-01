@@ -3,98 +3,54 @@
 
 import numpy as np
 import math
+from math import sin, cos
+
 class Gauss_newton:
-    def __init__(self, paramter, init_vale):
+    def __init__(self, paramter, init_value):
         self._allow_error = 0.1
-        self._best_state = np.array([[0.0], [0.0], [0.0], [0.0]])
-        self._best_state = init_vale
-        self._want_state = np.array([[0.0],[0.0],[0.0]])
+        self._current_state = init_value
+        self._error = 0.0
+        self._paramter = paramter
+        self._H = np.zeros((3, 3), dtype=float)
+        self._b = np.zeros((3, 1), dtype=float)
         
-        self._A = np.array([[1.0,0.0,0,0],[0.0,1.0,0.0,0.0],[1.0,0.0,0.0,0.0],[0.0,1.0,0.0,0.0],[1.0,0.0,0.0,0.0],[0.0,1.0,0.0,0.0],[1.0,0.0,0.0,0.0],[0.0,1.0,0.0,0.0],[1.0,0.0,0.0,0.0],[0.0,1.0,0.0,0.0]])
-        self._b = np.array([[0.0],[0.0],[0.0],[0.0],[0.0],[0.0],[0.0],[0.0],[0.0],[0.0]])
-        
-        self._A[0][2] = paramter[0][0]
-        self._A[0][3] = -paramter[0][1]
-        self._A[1][2] = paramter[0][1]
-        self._A[1][3] = paramter[0][0]
-        self._b[0][0] = paramter[1][0]
-        self._b[1][0] = paramter[1][1]
+       
+    def Linear(self):
+        self._error = 0.0
+        self._H = np.zeros((3, 3), dtype=float)
+        self._b = np.zeros((3, 1), dtype=float)
+        p_x = self._current_state[0][0]
+        p_y = self._current_state[1][0]
+        theta = self._current_state[2][0]
 
-
-        self._A[2][2] = paramter[0][2]
-        self._A[2][3] = -paramter[0][3]
-        self._A[3][2] = paramter[0][3]
-        self._A[3][3] = paramter[0][2]
-        self._b[2][0] = paramter[1][2]
-        self._b[3][0] = paramter[1][3]
-
-
-        self._A[4][2] = paramter[0][4]
-        self._A[4][3] = -paramter[0][5]
-        self._A[5][2] = paramter[0][5]
-        self._A[5][3] = paramter[0][4]
-        self._b[4][0] = paramter[1][4]
-        self._b[5][0] = paramter[1][5]
-
-        self._A[6][2] = paramter[0][6]
-        self._A[6][3] = -paramter[0][7]
-        self._A[7][2] = paramter[0][7]
-        self._A[7][3] = paramter[0][6]
-        self._b[6][0] = paramter[1][6]
-        self._b[7][0] = paramter[1][7]
-
-        self._A[8][2] = paramter[0][8]
-        self._A[8][3] = -paramter[0][9]
-        self._A[9][2] = paramter[0][9]
-        self._A[9][3] = paramter[0][8]
-        self._b[8][0] = paramter[1][8]
-        self._b[9][0] = paramter[1][9]
-        #print(self._A)
-        self._error_state = np.dot(self._A, self._best_state) - self._b
-
-
-    def Jacobi(self):
-        return (self._A)
-
-    def Error(self):
-        c = np.dot(self._error_state.T, self._error_state)
-        return c[0][0]
-
+        for i in range(0, 5):
+            l_x = self._paramter[1][2*i]
+            l_y = self._paramter[1][2*i+1]
+            z_1 = self._paramter[0][2*i]
+            z_2 = self._paramter[0][2*i+1]
+            J = np.array([[-cos(theta), -sin(theta), -(l_x - p_x) * sin(theta) + cos(theta) * (l_y - p_y)], [sin(theta), -cos(theta), -(l_x - p_x) * cos(theta) - sin(theta) * (l_y - p_y)]])
+            e = np.array([[cos(theta)*(l_x-p_x)+sin(theta)*(l_y-p_y)-z_1],[-sin(theta)*(l_x-p_x)+cos(theta)*(l_y-p_y)-z_2]])
+            self._H = np.dot(J.T, J) + self._H
+            self._b = -np.dot(J.T, e) + self._b
+            abs_error = np.dot(e.T, e)
+            self._error = self._error + abs_error[0][0]
+    
     def Solve(self):
         sum = 0
-        while self.Error() > self._allow_error and sum < 50:
+        while sum < 50:
             sum = sum + 1
+            self.Linear()
             #print(np.dot(self.Jacobi().T, self.Jacobi()))
-            delta = np.linalg.solve(np.dot(self.Jacobi().T, self.Jacobi()) + 0.0 * np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]), -np.dot(self.Jacobi().T, self._error_state))
-            #print(delta)
-            self._best_state[0][0] = delta[0] + self._best_state[0][0]
-            self._best_state[1][0] = delta[1] + self._best_state[1][0]
-            self._best_state[2][0] = delta[2] + self._best_state[2][0]
-            self._best_state[3][0] = delta[3] + self._best_state[3][0]
-            self._error_state = np.dot(self._A, self._best_state) - self._b
+            delta = np.linalg.solve(self._H + 0.1 * np.identity(3), self._b)
+            if self._error < self._allow_error:
+                return self._current_state
+            #print(self._error)
+            self._current_state[0][0] = delta[0] + self._current_state[0][0]
+            self._current_state[1][0] = delta[1] + self._current_state[1][0]
+            self._current_state[2][0] = delta[2] + self._current_state[2][0]
         # print(self.Error())
         # print("迭代：")
         # print(sum)
         # print("次")
-        if self._best_state[2][0] < -1.0:
-            self._best_state[2][0] = -1.0
-        if self._best_state[2][0] > 1.0:
-            self._best_state[2][0] = 1.0
-
-        if self._best_state[3][0] < -1.0:
-            self._best_state[3][0] = -1.0
-        if self._best_state[3][0] > 1.0:
-            self._best_state[3][0] = 1.0
-        
-        if self._best_state[2][0] > 0.0 and self._best_state[3][0] > 0.0:
-            self._want_state[2][0] = math.acos(self._best_state[2][0])
-        elif self._best_state[2][0] < 0.0 and self._best_state[3][0] > 0.0:
-            self._want_state[2][0] = math.acos(self._best_state[2][0])
-        elif self._best_state[2][0] < 0.0 and self._best_state[3][0] < 0.0:
-            self._want_state[2][0] = math.pi - math.asin(self._best_state[3][0])
-        elif self._best_state[2][0] > 0.0 and self._best_state[3][0] < 0.0:
-            self._want_state[2][0] = 2.0*math.pi + math.asin(self._best_state[3][0])
-        self._want_state[0][0] = self._best_state[0][0]
-        self._want_state[1][0] = self._best_state[1][0]
-        return self._want_state
+        return self._current_state
 

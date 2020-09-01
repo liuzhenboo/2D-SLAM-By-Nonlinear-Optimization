@@ -76,6 +76,8 @@ from frame import Frame
 # m = Measure()
 # print(math.acos(1.0 / 2.0))
 
-a = np.array([[1, 2], [3, 4]])
-b = np.array([[1],[1]])
-print(np.dot(a,b))
+# a = np.array([[1, 2], [3, 4]])
+# b = np.array([[1],[1]])
+# print(np.dot(a,b))
+a = math.cos(3.14)*2.0
+print(np.identity(8))

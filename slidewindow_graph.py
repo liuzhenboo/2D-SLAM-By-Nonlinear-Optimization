@@ -68,7 +68,7 @@ class Slidewindow_graph:
         # （2）前端跟踪：通过F2F跟踪五个点，初始估计新的状态；并将新的状态加入图
         self.Fivepoint_f2f_track()
         # （3）后端优化：利用滑窗内所有信息优化图
-        self.Optimize_graph()
+        #self.Optimize_graph()
         # （4）保存信息，用于做图
         self.For_draw()
 
@@ -90,9 +90,12 @@ class Slidewindow_graph:
                 self._f2ftrack.append(self._measure._data[2][i])
             i = i + 1
 
-        init_gs = np.array([[self._lastframe._pose[0][0]], [self._lastframe._pose[1][0]], [cos(self._lastframe._pose[2][0])], [sin(self._lastframe._pose[2][0])]])
+        init_gs0 = np.array([[self._lastframe._pose[0][0]], [self._lastframe._pose[1][0]], [cos(self._lastframe._pose[2][0])], [sin(self._lastframe._pose[2][0])]])
+        init_gs = np.array([[self._lastframe._pose[0][0]],[self._lastframe._pose[1][0]],[self._lastframe._pose[2][0]]])
         # 高斯牛顿法求解
+        GNsolve0 = Gauss_newton(self._coefficient, init_gs0)
         GNsolve = Gauss_newton(self._coefficient, init_gs)
+        
         x = GNsolve.Solve()
         newFrame.set_pose(x)
         # 根据当前帧的位置，来估计新增加mappoint的初始位置；老的mappoints位置不变
