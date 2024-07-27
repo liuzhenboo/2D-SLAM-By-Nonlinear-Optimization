@@ -34,7 +34,7 @@ class Draw:
         # 真实位置(x,y)
         self._x = [self._movemodel._currentpose[0,0]]
         self._y = [self._movemodel._currentpose[1, 0]]
-        file.write(str(self._movemodel._currentpose[0][-1]) + ' ' + str(self._movemodel._currentpose[1][-1]) + '\n')
+        # file.write(str(self._movemodel._currentpose[0][-1]) + ' ' + str(self._movemodel._currentpose[1][-1]) + '\n')
 
         # 真实轨迹
         self._traj = np.append((self._traj),[self._x, self._y], axis=1)
@@ -53,8 +53,8 @@ class Draw:
         ax.set_aspect(1)
         # 预测轨迹: self._graph._esti_pose[0] --> x序列, self._graph._esti_pose[1] --> y序列
         plt.plot(self._graph._esti_pose[0], self._graph._esti_pose[1], color= 'b')
-        # if self._graph._esti_pose[0]:
-        #     file.write(str(self._graph._esti_pose[0][-1]) + ' ' + str(self._graph._esti_pose[1][-1]) + '\n')
+        if self._graph._esti_pose[0]:
+            file.write(str(self._graph._esti_pose[0][-1]) + ' ' + str(self._graph._esti_pose[1][-1]) + '\n')
 
         # 传感器范围
         plt.plot(self._circlex,self._circley, color='b', linestyle='--')
