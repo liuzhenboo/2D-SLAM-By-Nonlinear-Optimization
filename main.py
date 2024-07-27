@@ -40,7 +40,7 @@ step = 0
 end = 70
 # 主逻辑（*.*）
 # 创建一个txt并获取文件句柄
-file_handle = open('pose_line.txt', 'w')
+file_handle = open('pose_.txt', 'w')
      
 #########################################################
 while step != end:

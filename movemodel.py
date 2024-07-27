@@ -12,9 +12,9 @@ class MoveModel:
         # 位置
         self._tb = np.array([[init_pose[0, 0]], [init_pose[1, 0]]])  # 2*1
         # 初始运动方向向量(固定旋转角度，用模长控制运动半径)
-        self._delta_xy = np.array([[0],[0.25]])
+        self._delta_xy = np.array([[0.6],[0.1]])
         # 每步旋转角度(rad)
-        self._delta_jiaodu = 0.0
+        self._delta_jiaodu = 0.085
 
     def Updatepose(self):
         # update _currentpose

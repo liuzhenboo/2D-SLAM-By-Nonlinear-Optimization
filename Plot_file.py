@@ -13,19 +13,20 @@ def read_pose_data(file_path):
     return x_coords, y_coords
 
 # 读取三个不同的txt文件
-# x_coords1, y_coords1 = read_pose_data('pose_data_opt1.txt')
-# x_coords2, y_coords2 = read_pose_data('pose_data_no2.txt')
-# x_coords3, y_coords3 = read_pose_data('pose_gt.txt')
+x_coords0, y_coords0 = read_pose_data('pose_round_wo.txt')
+x_coords1, y_coords1 = read_pose_data('pose_opt_lower.txt')
+x_coords2, y_coords2 = read_pose_data('pose_data_opt.txt')
+x_coords3, y_coords3 = read_pose_data('pose_gt.txt')
 
 # 读取三个不同的txt文件
-x_coords0, y_coords0 = read_pose_data('pose_line_wo1.txt')
-x_coords1, y_coords1 = read_pose_data('pose_line_base.txt')
-x_coords2, y_coords2 = read_pose_data('pose_line_adv.txt')
-x_coords3, y_coords3 = read_pose_data('pose_line_gt.txt')
+# x_coords0, y_coords0 = read_pose_data('pose_line_wo1.txt')
+# x_coords1, y_coords1 = read_pose_data('pose_line_base.txt')
+# x_coords2, y_coords2 = read_pose_data('pose_line_adv.txt')
+# x_coords3, y_coords3 = read_pose_data('pose_line_gt.txt')
 
 
 # 设置绘图范围
-plt.axis([2,20,2,20])
+plt.axis([2,19,1,18])
 x_coords0.insert(0, x_coords3[0])
 y_coords0.insert(0, y_coords3[0])
 x_coords1.insert(0, x_coords3[0])
