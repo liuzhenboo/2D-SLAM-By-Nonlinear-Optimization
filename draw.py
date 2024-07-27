@@ -30,10 +30,12 @@ class Draw:
         self._movemodel = movemodel
 
     # 画出当前时刻路标点位置, 真实运动点,估计运动点,扫描半径
-    def Show_result(self, r):
+    def Show_result(self, r, file):
         # 真实位置(x,y)
         self._x = [self._movemodel._currentpose[0,0]]
         self._y = [self._movemodel._currentpose[1, 0]]
+        file.write(str(self._movemodel._currentpose[0][-1]) + ' ' + str(self._movemodel._currentpose[1][-1]) + '\n')
+
         # 真实轨迹
         self._traj = np.append((self._traj),[self._x, self._y], axis=1)
         # 扫描半径
@@ -51,6 +53,9 @@ class Draw:
         ax.set_aspect(1)
         # 预测轨迹: self._graph._esti_pose[0] --> x序列, self._graph._esti_pose[1] --> y序列
         plt.plot(self._graph._esti_pose[0], self._graph._esti_pose[1], color= 'b')
+        # if self._graph._esti_pose[0]:
+        #     file.write(str(self._graph._esti_pose[0][-1]) + ' ' + str(self._graph._esti_pose[1][-1]) + '\n')
+
         # 传感器范围
         plt.plot(self._circlex,self._circley, color='b', linestyle='--')
         # 真实位置

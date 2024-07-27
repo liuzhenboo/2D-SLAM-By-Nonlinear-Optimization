@@ -33,12 +33,15 @@ r = 3.0
 # 创建measure对象
 measure = Measure(move_model, landmarks, r)
 # measure.SerializeMeasure(100)
-f = measure.DeserializeMeasure()
+# f = measure.DeserializeMeasure()
 
 # 循环计数
 step = 0
-end = f
-# 主逻辑（*.*）     
+end = 70
+# 主逻辑（*.*）
+# 创建一个txt并获取文件句柄
+file_handle = open('pose_data.txt', 'w')
+     
 #########################################################
 while step != end:
     measure.GetMeasure(step)
@@ -51,10 +54,12 @@ while step != end:
         slidewindow_graph.Update(measure) 
         t2 = time.perf_counter()
         print("optimize cost:",t2-t1)
-    draw.Show_result(r)
+    draw.Show_result(r,file_handle)
     
     move_model.Updatepose()
     step = step + 1
 
 # draw.Save_result()
+# 确保在程序结束时关闭文件
+file_handle.close()
 ##############################################################
